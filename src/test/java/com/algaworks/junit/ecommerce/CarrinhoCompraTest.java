@@ -267,22 +267,29 @@ class CarrinhoCompraTest {
         }
 
         @Test
-        @DisplayName("Deve Calcular Valor total da Compra")
+        @DisplayName("E Deve Calcular Valor total da Compra")
         void deveCalcularValorTotal() {
             assertEquals(new BigDecimal("18000"), carrinhoCompra.getValorTotal());
         }
 
         @Test
-        @DisplayName("Deve Calcular Quantidade total de Produtos")
+        @DisplayName("E Deve Calcular Quantidade total de Produtos")
         void deveCalcularValorTotalDeProdutos() {
             assertEquals(5, carrinhoCompra.getQuantidadeTotalDeProdutos());
         }
 
         @Test
-        @DisplayName("Deve Esvaziar Carrinho")
+        @DisplayName("E Deve Esvaziar Carrinho")
         void deveEsvaziarCarrinho() {
             carrinhoCompra.esvaziar();
             assertTrue(carrinhoCompra.getItens().isEmpty());
+        }
+
+        @Test
+        @DisplayName("E deve retornar uma nova instância da lista de itens")
+        void eDeveRetornarUmaNovaLista() {
+            carrinhoCompra.getItens().clear(); //Get Itens, retorna uma nova lista
+            assertEquals(2, carrinhoCompra.getItens().size()); //Lista permaneceu intacta
         }
 
     }
