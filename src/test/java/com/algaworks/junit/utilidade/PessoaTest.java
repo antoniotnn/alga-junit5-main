@@ -8,10 +8,10 @@ class PessoaTest {
 
     @Test
     void assercaoAgrupada() {
-        Pessoa pessoa = new Pessoa("Alex", "Silva");
+        Pessoa pessoa = new Pessoa("Antonio", "Pires");
 
         assertAll("Asserções de pessoa",
-                () -> assertEquals("Alex", pessoa.getNome()),
-                () -> assertEquals("Silva", pessoa.getSobrenome()));
+                () -> assertEquals("Antonio", pessoa.getNome()),
+                () -> assertEquals("Pires", pessoa.getSobrenome()));
     }
 }

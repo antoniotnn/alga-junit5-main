@@ -13,7 +13,7 @@ public class ContaBancaria {
     }
 
     public void saque(BigDecimal valor) {
-        this.validarValor(valor);
+        this.validarSaque(valor);
         this.saldo = this.saldo.subtract(valor);
     }
 
@@ -27,7 +27,11 @@ public class ContaBancaria {
     }
 
     private void validarValor(BigDecimal valor) {
-        if (valor == null || valor.compareTo(new BigDecimal("0")) <= 0) throw new IllegalArgumentException(VALOR_INVALIDO);
-        if (this.saldo.compareTo(new BigDecimal(valor.toPlainString())) < 0) throw new RuntimeException("Saldo Insuficiente");
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException(VALOR_INVALIDO);
+    }
+
+    private void validarSaque(BigDecimal valor) {
+        this.validarValor(valor);
+        if (this.saldo.compareTo(valor) < 0) throw new RuntimeException("Saldo Insuficiente");
     }
 }
