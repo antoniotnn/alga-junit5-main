@@ -22,7 +22,7 @@ public class CadastroEditorComMockTest {
     ArmazenamentoEditor armazenamentoEditor;
     @Mock
     GerenciadorEnvioEmail gerenciadorEnvioEmail;
-    @InjectMocks // para injetar os Mocks acima por por parâmetro no construtor do CadastroEditor na sua criação.
+    @InjectMocks
     CadastroEditor cadastroEditor;
 
 
@@ -30,27 +30,27 @@ public class CadastroEditorComMockTest {
     void beforeEach() {
         editor = new Editor(null, "Antonio", "antonio@teste.com", BigDecimal.TEN, true);
 
-        //ArmazenamentoEditor armazenamentoEditor = Mockito.mock(ArmazenamentoEditor.class);
-//        Mockito.when(armazenamentoEditor.salvar(editor))
-//                .thenReturn(new Editor(1L, "Antonio", "antonio@teste.com", BigDecimal.TEN, true));
-
-        // Uma forma de não especificar a instância do editor específica e sim Qualquer Uma que for passada. (Parâmetro Dinâmico)
-        //Mockito.when(armazenamentoEditor.salvar(Mockito.any(Editor.class)))
-        Mockito.when(armazenamentoEditor.salvar(editor)) // outra forma de customizar o retorno do método da classe (Editor) que foi invocada.
+        Mockito.when(armazenamentoEditor.salvar(Mockito.any(Editor.class)))
             .thenAnswer(invocacao -> {
                 Editor editorPassado = invocacao.getArgument(0, Editor.class);
                 editorPassado.setId(1L);
                 return editorPassado;
             });
 
-        //GerenciadorEnvioEmail gerenciadorEnvioEmail = Mockito.mock(GerenciadorEnvioEmail.class);
-
-        //cadastroEditor = new CadastroEditor(armazenamentoEditor, gerenciadorEnvioEmail); // comentado pois o @InjectMocks faz esse trabalho.
     }
 
     @Test
     void Dado_um_editor_valido_Quando_criar_Entao_deve_retornar_um_id_de_cadastro() {
         Editor editorSalvo = cadastroEditor.criar(editor);
         assertEquals(1L, editorSalvo.getId());
+    }
+
+    @Test
+    void Dado_um_editor_valido_Quando_criar_Entao_deve_chamar_metodo_salvar_do_armazenamento() {
+        cadastroEditor.criar(editor);
+
+        // Verificando se o Método salvar foi chamado 1 vez nesse teste, com a instancia de "editor" passada.
+        Mockito.verify(armazenamentoEditor, Mockito.times(1))
+                .salvar(Mockito.eq(editor));
     }
 }
