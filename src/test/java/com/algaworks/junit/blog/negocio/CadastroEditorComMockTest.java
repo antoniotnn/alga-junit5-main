@@ -4,9 +4,7 @@ import com.algaworks.junit.blog.armazenamento.ArmazenamentoEditor;
 import com.algaworks.junit.blog.modelo.Editor;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -17,7 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class) // necessário ao usar Annotation @Mock apenas.
 public class CadastroEditorComMockTest {
 
-    Editor editor;
+    @Spy
+    Editor editor = new Editor(null, "Antonio", "antonio@teste.com", BigDecimal.TEN, true);
+
+    @Captor // outra forma de usar o Argument Captor, via annotation, para fazer o mesmo do que está comentado logo mais abaixo.
+    ArgumentCaptor<Mensagem> mensagemArgumentCaptor;
     @Mock
     ArmazenamentoEditor armazenamentoEditor;
     @Mock
@@ -28,8 +30,6 @@ public class CadastroEditorComMockTest {
 
     @BeforeEach
     void beforeEach() {
-        editor = new Editor(null, "Antonio", "antonio@teste.com", BigDecimal.TEN, true);
-
         Mockito.when(armazenamentoEditor.salvar(Mockito.any(Editor.class)))
             .thenAnswer(invocacao -> {
                 Editor editorPassado = invocacao.getArgument(0, Editor.class);
@@ -64,5 +64,28 @@ public class CadastroEditorComMockTest {
             // Garantir que o método abaixo nunca tenha sido chamado nesse teste.
             () -> Mockito.verify(gerenciadorEnvioEmail, Mockito.never()).enviarEmail(Mockito.any())
         );
+    }
+
+    @Test
+    void Dado_um_editor_valido_Quando_cadastrar_Entao_deve_enviar_email_com_destino_ao_editor() {
+        //Capturar argumento passado na execução do método, possui outra forma também via anottation
+//        ArgumentCaptor<Mensagem> mensagemArgumentCaptor = ArgumentCaptor.forClass(Mensagem.class);
+
+        Editor editorSalvo = cadastroEditor.criar(editor);
+
+        Mockito.verify(gerenciadorEnvioEmail).enviarEmail(mensagemArgumentCaptor.capture());
+
+        Mensagem mensagem = mensagemArgumentCaptor.getValue();
+
+        assertEquals(editorSalvo.getEmail(), mensagem.getDestinatario());
+    }
+
+    @Test
+    void Dado_um_editor_valido_Quando_cadastrar_Entao_deve_verificar_o_email() {
+        //criar uma instancia de um objeto real que pode ser espionado, também pode ser feito via annotation.
+//        Editor editorSpy = Mockito.spy(editor);
+        cadastroEditor.criar(editor);
+        //verifica se o getEmail() foi chamado pelo menos 1 vez. (aqui na verdade é chamado 2 vezes)
+        Mockito.verify(editor, Mockito.atLeast(1)).getEmail();
     }
 }
