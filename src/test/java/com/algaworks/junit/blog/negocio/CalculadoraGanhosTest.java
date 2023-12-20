@@ -25,7 +25,7 @@ class CalculadoraGanhosTest {
 
     @BeforeEach
     void beforeEach() {
-        autor = new Editor(1L, "Antonio", "antonio@gmail.com", new BigDecimal("5"), true);
+        autor = new Editor(1L, "Antonio", "antonio@teste.com", new BigDecimal("5"), true);
 
         post = new Post(1L, "Ecossistema Java", "O ecossistema do Java é muito maduro", autor,
                 "ecossistema-java-abc123", null, false, false);
