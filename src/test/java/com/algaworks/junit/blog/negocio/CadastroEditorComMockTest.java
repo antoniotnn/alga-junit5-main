@@ -34,6 +34,8 @@ public class CadastroEditorComMockTest {
 //        Mockito.when(armazenamentoEditor.salvar(editor))
 //                .thenReturn(new Editor(1L, "Antonio", "antonio@teste.com", BigDecimal.TEN, true));
 
+        // Uma forma de não especificar a instância do editor específica e sim Qualquer Uma que for passada. (Parâmetro Dinâmico)
+        //Mockito.when(armazenamentoEditor.salvar(Mockito.any(Editor.class)))
         Mockito.when(armazenamentoEditor.salvar(editor)) // outra forma de customizar o retorno do método da classe (Editor) que foi invocada.
             .thenAnswer(invocacao -> {
                 Editor editorPassado = invocacao.getArgument(0, Editor.class);
