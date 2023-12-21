@@ -25,12 +25,16 @@
 			<version>5.4.0</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
+			<!--			<artifactId>mockito-core</artifactId>-->
+			<!-- Usando mock em métodos estáticos, precisa substituir o mockito-core pelo mockito-inline. OBS: Ainda em fase experimental podendo apresentar instabilidades -->
+			<artifactId>mockito-inline</artifactId>
 			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
