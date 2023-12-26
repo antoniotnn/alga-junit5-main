@@ -1,5 +1,6 @@
 package com.algaworks.junit.ecommerce;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -251,19 +252,19 @@ class CarrinhoCompraTest {
     class CarrinhoCompraItensProdutoComDuasUnidadesOutroComTres {
 
         private CarrinhoCompra carrinhoCompra;
-        private Produto produto1;
-        private Produto produto2;
+        private Produto iphoneX;
+        private Produto ps5;
 
         @BeforeEach
         void beforeEach() {
             Cliente cliente = new Cliente(1L, "Antonio Pires");
             carrinhoCompra = new CarrinhoCompra(cliente);
-            produto1 = new Produto(
+            iphoneX = new Produto(
                     1L, "Iphone X", "Smartphone da Apple", new BigDecimal("3000"));
-            produto2 = new Produto(
+            ps5 = new Produto(
                     2L, "PS5", "Console da Sony", new BigDecimal("4000"));
-            carrinhoCompra.adicionarProduto(produto1, 2);
-            carrinhoCompra.adicionarProduto(produto2, 3);
+            carrinhoCompra.adicionarProduto(iphoneX, 2);
+            carrinhoCompra.adicionarProduto(ps5, 3);
         }
 
         @Test
@@ -290,6 +291,18 @@ class CarrinhoCompraTest {
         void eDeveRetornarUmaNovaLista() {
             carrinhoCompra.getItens().clear(); //Get Itens, retorna uma nova lista
             assertEquals(2, carrinhoCompra.getItens().size()); //Lista permaneceu intacta
+        }
+
+        @Test
+        @DisplayName("Então deve conter apenas produtos adicionados")
+        void entaoDeveConterApenasProdutosAdicionados() {
+            Produto xboxSeriesX;
+            xboxSeriesX = new Produto(
+                    3L, "XBOX SERIES X", "Console da Microsoft", new BigDecimal("4000"));
+
+            Assertions.assertThat(carrinhoCompra.getItens()).flatMap(ItemCarrinhoCompra::getProduto)
+                    .contains(iphoneX, ps5)
+                    .doesNotContain(xboxSeriesX);
         }
 
     }
