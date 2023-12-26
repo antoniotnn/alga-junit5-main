@@ -1,6 +1,7 @@
 package com.algaworks.junit.utilidade;
 
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -12,6 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Random;
 
 import static com.algaworks.junit.utilidade.SaudacaoUtil.saudar;
+import static com.algaworks.junit.utilidade.SaudacaoUtilConditions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,18 +53,25 @@ class SaudacaoUtilTest {
 
     @Test
     void Dado_um_horario_matutino_Quando_saudar_Entao_deve_retornar_bom_dia_usando_AssertJ() {
-        //8.4. Asserções com mensagens descritivas
-
         int horaValida = 9;
 //        String saudacao = saudar(horaValida).toUpperCase();  // para verificar o uso do que está sendo feito abaixo. (
         String saudacao = saudar(horaValida);
-        String saudacaoCorreta = "Bom dia";
+//        String saudacaoCorreta = "Bom dia";
 
         //AssertJ
-        assertThat(saudacao)
-                .as("Validando se a saudação é %s", saudacaoCorreta)
-                .withFailMessage("Erro: Saudação incorreta! Resultado: %s", saudacao)
-                .isEqualTo(saudacaoCorreta);
+        //8.4. Asserções com mensagens descritivas
+//        assertThat(saudacao)
+//                .as("Validando se a saudação é %s", saudacaoCorreta)
+//                .withFailMessage("Erro: Saudação incorreta! Resultado: %s", saudacao)
+//                .isEqualTo(saudacaoCorreta);
+
+        //8.5 Asserções customizadas ( outra forma de fazer o que está comentado acima)
+//        Condition<String> bomDia = new Condition<>((string) -> string.equals(saudacaoCorreta),
+//                "igual a %s",
+//                saudacaoCorreta);
+
+//        assertThat(saudacao).is(bomDia);
+        assertThat(saudacao).is(igualBomDia());
     }
 
     @Test
