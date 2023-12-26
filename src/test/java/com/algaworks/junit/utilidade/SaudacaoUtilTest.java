@@ -112,6 +112,16 @@ class SaudacaoUtilTest {
     }
 
     @Test
+    public void Dado_uma_hora_invalida_Quando_saudar_Entao_deve_lancar_exception_usando_AssertJ() {
+        int horaInvalida = -10;
+//        IllegalArgumentException e = Assertions.catchThrowableOfType(() -> saudar(horaInvalida), IllegalArgumentException.class);
+//        assertThat(e).hasMessage("Hora inválida");
+        Assertions.assertThatThrownBy(() -> saudar(horaInvalida))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Hora inválida");
+    }
+
+    @Test
 //    @DisplayName("Não deve lançar Exception")
     public void Dado_uma_hora_invalida_Quando_saudar_Entao_nao_deve_lancar_exception() {
         //Arrange
