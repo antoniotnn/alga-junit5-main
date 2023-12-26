@@ -50,6 +50,22 @@ class SaudacaoUtilTest {
     }
 
     @Test
+    void Dado_um_horario_matutino_Quando_saudar_Entao_deve_retornar_bom_dia_usando_AssertJ() {
+        //8.4. Asserções com mensagens descritivas
+
+        int horaValida = 9;
+//        String saudacao = saudar(horaValida).toUpperCase();  // para verificar o uso do que está sendo feito abaixo. (
+        String saudacao = saudar(horaValida);
+        String saudacaoCorreta = "Bom dia";
+
+        //AssertJ
+        assertThat(saudacao)
+                .as("Validando se a saudação é %s", saudacaoCorreta)
+                .withFailMessage("Erro: Saudação incorreta! Resultado: %s", saudacao)
+                .isEqualTo(saudacaoCorreta);
+    }
+
+    @Test
     @DisplayName("Deve saudar com Bom dia, recebendo números aleatórios dentro da range")
     public void deveSaudarBomDia() {
         //Arrange
