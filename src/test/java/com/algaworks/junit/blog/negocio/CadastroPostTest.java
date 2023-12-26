@@ -55,7 +55,6 @@ class CadastroPostTest {
 
             Mockito.verify(armazenamentoPost, Mockito.times(1)).salvar(Mockito.any(Post.class));
         }
-
         @Test
         public void Dado_um_post_valido__Quanto_cadastrar__Entao_deve_retornar_id_valido() {
             Mockito.when(armazenamentoPost.salvar(Mockito.any(Post.class)))
@@ -104,7 +103,7 @@ class CadastroPostTest {
         }
 
         @Test
-        public void Dado_um_post_null__Quanto_cadastrar__Entao_deve_lancar_exception_e_nao_deve_savar() {
+        public void Dado_um_post_null__Quanto_cadastrar__Entao_deve_lancar_exception_e_nao_deve_salvar() {
             Assertions.assertThrows(NullPointerException.class, ()-> cadastroPost.criar(null));
             Mockito.verify(armazenamentoPost, Mockito.never()).salvar(Mockito.any(Post.class));
         }
