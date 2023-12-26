@@ -1,6 +1,7 @@
 package com.algaworks.junit.blog.negocio;
 
 import com.algaworks.junit.blog.armazenamento.ArmazenamentoEditor;
+import com.algaworks.junit.blog.exception.EditorNaoEncontradoException;
 import com.algaworks.junit.blog.exception.RegraNegocioException;
 import com.algaworks.junit.blog.modelo.Editor;
 import org.junit.jupiter.api.*;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @ExtendWith(MockitoExtension.class) // necessário ao usar Annotation @Mock apenas.
 public class CadastroEditorComMockTest {
-
-    @Spy
-    Editor editor = new Editor(null, "Antonio", "antonio@teste.com", BigDecimal.TEN, true);
 
     @Captor // outra forma de usar o Argument Captor, via annotation, para fazer o mesmo do que está comentado logo mais abaixo.
     ArgumentCaptor<Mensagem> mensagemArgumentCaptor;
@@ -32,6 +29,10 @@ public class CadastroEditorComMockTest {
 
     @Nested
     class CadastroComEditorValido {
+
+        @Spy
+        Editor editor = EditorTestData.umEditorNovo().build();
+
         @BeforeEach
         void beforeEach() {
             Mockito.when(armazenamentoEditor.salvar(Mockito.any(Editor.class)))
@@ -100,7 +101,7 @@ public class CadastroEditorComMockTest {
                     .thenReturn(Optional.empty())
                     .thenReturn(Optional.of(editor));
 
-            Editor editorComEmailExistente = new Editor(null, "Antonio", "antonio@teste.com", BigDecimal.TEN, true);
+            Editor editorComEmailExistente = EditorTestData.umEditorNovo().build();
             cadastroEditor.criar(editor);
             assertThrows(RegraNegocioException.class, () -> cadastroEditor.criar(editorComEmailExistente));
 
@@ -125,6 +126,52 @@ public class CadastroEditorComMockTest {
             assertThrows(NullPointerException.class, () -> cadastroEditor.criar(null));
             Mockito.verify(armazenamentoEditor, Mockito.never()).salvar(Mockito.any());
             Mockito.verify(gerenciadorEnvioEmail, Mockito.never()).enviarEmail(Mockito.any());
+        }
+    }
+
+    @Nested
+    class EdicaoComEditorValido {
+
+        @Spy
+        Editor editor = EditorTestData.umEditorExistente().build();
+
+        @BeforeEach
+        void beforeEach() {
+            Mockito.when(armazenamentoEditor.salvar(editor)).thenAnswer(invocacao -> invocacao.getArgument(0, Editor.class));
+            Mockito.when(armazenamentoEditor.encontrarPorId(1L)).thenReturn(Optional.of(editor));
+        }
+
+        @Test
+        void Dado_um_editor_valido_Quando_editar_Entao_deve_alterar_o_editor_salvo() {
+            Editor editorAtualizado = EditorTestData.umEditorExistente()
+                    .comEmail("antonio.pires@teste.com")
+                    .comNome("Antonio Pires")
+                    .build();
+
+            cadastroEditor.editar(editorAtualizado);
+            Mockito.verify(editor, Mockito.times(1)).atualizarComDados(editorAtualizado);
+
+            InOrder inOrder = Mockito.inOrder(editor, armazenamentoEditor);
+            inOrder.verify(editor).atualizarComDados(editorAtualizado);
+            inOrder.verify(armazenamentoEditor).salvar(editor);
+        }
+
+    }
+
+    @Nested
+    class EdicaoComEditorInexistente {
+
+        Editor editor = EditorTestData.umEditorComIdInexistente().build();
+
+        @BeforeEach
+        void beforeEach() {
+            Mockito.when(armazenamentoEditor.encontrarPorId(99L)).thenReturn(Optional.empty());
+        }
+
+        @Test
+        void Dado_um_editor_que_nao_exista_Quando_editar_Entao_deve_lancar_exception() {
+            assertThrows(EditorNaoEncontradoException.class, () -> cadastroEditor.editar(editor));
+            Mockito.verify(armazenamentoEditor, Mockito.never()).salvar(Mockito.any(Editor.class));
         }
     }
 
